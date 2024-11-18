@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import torchvision
-import torch
 import random
 import matplotlib.pyplot as plt
 
