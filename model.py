@@ -55,9 +55,10 @@ class NCA(nn.Module):
             
             # Reshape back to grid shape (batch_size, height, width, n_channels)
             delta_grid = dense_output.view(-1, self.height, self.width, self.n_channels)
+            delta_grid_c = delta_grid.clone()
+            delta_grid_c[:,:,:,0]=0
             
             #add the delta grid to the grid
-            grid = grid + delta_grid
-            
+            grid = grid + delta_grid_c
         
         return grid[:,:,:,1:11]
