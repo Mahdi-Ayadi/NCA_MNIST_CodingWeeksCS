@@ -16,6 +16,14 @@ class Affiche_NCA:
         """
         n, p = self.input.shape[:2]
         return np.random.rand(n, p, 3)  # Dimensions séparées pour np.random.rand.
+    
+    
+    
+#####################################EXPLICATION#########################################################
+#Là, je code une classe MockNCA parce que pour voir si le code de la fonction animate_nca de  
+#l'animation matplotlib fonctionne bien, il me faut la foction update (cf ligne ) qu'on n'a   
+#pas encore codée, du coup là elle est faite avec un random, le but étant juste de tester animate_nca
+#########################################################################################################
 
 
 class MockNCA:
@@ -39,6 +47,12 @@ class MockNCA:
 
 # Crée une grille initiale de taille 28x28 avec 3 canaux (par exemple pour RGB)
 initial_grid = np.random.uniform(0, 1, (28, 28, 3))
+
+
+#####################################EXPLICATION#########################################################
+#La fonction ci-dessous "animate_nca" est celle qui nous intéresse
+#########################################################################################################
+
 
 
 def animate_nca(model, initial_grid, steps=100, interval=50):
