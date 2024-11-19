@@ -71,4 +71,8 @@ class NCA(nn.Module):
             #add the delta grid to the grid
             grid = grid + delta_grid_c
         
-        return grid[:,:,:,1:11]
+        proba_grid = grid[:,:,:,1:11].view(-1,10)
+        proba_grid = torch.nn.functional.softmax(proba_grid , dim=1)
+        proba_grid = proba_grid.view(-1,self.height,self.width,10)
+        
+        return proba_grid
