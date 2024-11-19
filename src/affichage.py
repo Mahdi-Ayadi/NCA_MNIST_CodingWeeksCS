@@ -12,4 +12,4 @@ class Affiche_NCA():
     
     def next(self):
         n,p = self.input.shape
-        return np.random.rand((n,p,3))
+        return np.random.rand(n,p,3)
