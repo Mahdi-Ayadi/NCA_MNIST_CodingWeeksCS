@@ -23,13 +23,13 @@ class Affiche_NCA():
         self.input = input
         self.color_map = color_map
         self.transform()
-        
+
     def transform(self):
         """
         Transforms the input image to a color image based on color_map.
         """
         return self.input
-    
+
     def next(self):
         """
         Returns a new colorized image with random colors.
@@ -80,10 +80,6 @@ class DrawingApp:
         self.reset_button = tk.Button(self.palette_frame, text="Reset Grid", command=self.reset_grid)
         self.reset_button.pack(pady=10)
 
-        # Button to change color randomly using next()
-        self.random_color_button = tk.Button(self.palette_frame, text="Colorize with Next()", command=self.colorize_with_next)
-        self.random_color_button.pack(pady=10)
-
         # Bind mouse events to canvas for drawing
         self.canvas.bind("<Button-1>", self.start_drawing)
         self.canvas.bind("<B1-Motion>", self.paint)
@@ -96,11 +92,25 @@ class DrawingApp:
         self.color = "black"
         self.last_x, self.last_y = None, None
 
-        
-
         # Initialize the image for Affiche_NCA with a black and white input image
         self.input_image = np.zeros((self.canvas_size // self.grid_size, self.canvas_size // self.grid_size), dtype=np.uint8)
         self.affiche_nca = Affiche_NCA(self.input_image, color_map)
+
+        # Store drawn items to update colors later
+        self.drawn_items = []
+
+        # Flag to track drawing state
+        self.is_drawing = False
+
+        # Start the periodic update of the image (this should not block the drawing)
+        self.update_colorize()
+
+    def update_colorize(self):
+        # Update the image only if the user is not drawing
+        if not self.is_drawing:
+            self.colorize_with_next()  # Perform one update now
+        # Schedule the next update in 500 ms
+        self.root.after(500, self.update_colorize)
 
     def fill_color_palette(self):
         # Fill the color palette with a gradient of colors
@@ -125,12 +135,11 @@ class DrawingApp:
         if i == 4: return f'#{int(t * 255):02x}{int(p * 255):02x}{int(v * 255):02x}'
         if i == 5: return f'#{int(v * 255):02x}{int(p * 255):02x}{int(q * 255):02x}'
 
-   
-
     def reset_grid(self):
         # Clear all drawings on the canvas and redraw the grid
         self.canvas.delete("all")
         self.draw_grid()
+        self.drawn_items.clear()  # Clear the list of drawn items
 
     def select_color(self, event):
         # Select color from the palette based on click position
@@ -141,11 +150,12 @@ class DrawingApp:
 
     def start_drawing(self, event):
         # Start drawing when mouse button is pressed
+        self.is_drawing = True  # Set drawing flag to True
         self.paint_pixel(event.x, event.y)
 
     def stop_drawing(self, event):
         # Stop drawing when mouse button is released
-        pass
+        self.is_drawing = False  # Set drawing flag to False
 
     def paint_pixel(self, x, y):
         # Calculate the pixel position based on grid size
@@ -159,9 +169,11 @@ class DrawingApp:
         # Color the pixels around the touch position
         for i in range(-half_brush, half_brush + 1):
             for j in range(-half_brush, half_brush + 1):
-                self.canvas.create_rectangle(pixel_x + i * self.grid_size, pixel_y + j * self.grid_size,
-                                              pixel_x + (i + 1) * self.grid_size, pixel_y + (j + 1) * self.grid_size,
-                                              fill=self.color, outline=self.color)
+                rect = self.canvas.create_rectangle(
+                    pixel_x + i * self.grid_size, pixel_y + j * self.grid_size,
+                    pixel_x + (i + 1) * self.grid_size, pixel_y + (j + 1) * self.grid_size,
+                    fill=self.color, outline=self.color)
+                self.drawn_items.append(rect)  # Track the drawn items
 
     def paint(self, event):
         # Paint the pixels touched by the mouse
@@ -179,19 +191,17 @@ class DrawingApp:
         # Get the new random image from next() method
         new_image = self.affiche_nca.next()
 
-        # Display the new image on the canvas by updating the colors of the pixels
-        for item in self.canvas.find_all():
-            # Only change the color of filled rectangles (the drawing)
-            coords = self.canvas.coords(item)
+        # Update only the drawn pixels' colors
+        for rect in self.drawn_items:
+            coords = self.canvas.coords(rect)
             if len(coords) == 4:  # Rectangle item
-                # Randomly generate color from the new image
                 pixel_x = int(coords[0] // self.grid_size)
                 pixel_y = int(coords[1] // self.grid_size)
                 color = new_image[pixel_x, pixel_y]  # RGB value from the new image
                 color_hex = f'#{int(color[0] * 255):02x}{int(color[1] * 255):02x}{int(color[2] * 255):02x}'
 
                 # Update the color of the pixel
-                self.canvas.itemconfig(item, fill=color_hex)
+                self.canvas.itemconfig(rect, fill=color_hex)
 
 if __name__ == "__main__":
     root = tk.Tk()
