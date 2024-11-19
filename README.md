@@ -33,6 +33,32 @@ F12: Visualisation des grilles en évolution sur TKINTER
 
 F13: création de l'outil du dessin autonome
 
+#  Conception
+
+ Class NCA: -width  -height  -N channels -N filters [3,3,20]
+
+Method= NCA(channel_n=CHANNEL_N, fire_rate=CELL_FIRE_RATE,add_noise=ADD_NOISE)
+
+Model(input)
+
+Methodes: 
+
+Affiche(n,n,1) --> n,n,3
+
+Forward(grid0) --> gridTR
+
+Update{gridn) --> gridn+1
+
+Convertir(grid: n, n ,20 --> n,n,3)
+==> TKINTER
+
+Class Affichage _NCA :
+
+__init__(input, color_map)
+
+Next_img() --> n,n,3
+ 
+
 
 
 ## Installation
