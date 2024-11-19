@@ -5,7 +5,8 @@ import random
 import matplotlib.pyplot as plt
 
 # Define file paths
-data_dir = os.path.join('..', 'data')
+current_dir = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.join(current_dir, '..', 'data')
 X_train_path = os.path.join(data_dir, "X_train.npy")
 Y_train_path = os.path.join(data_dir, "Y_train.npy")
 X_test_path = os.path.join(data_dir, "X_test.npy")
@@ -25,9 +26,6 @@ if not (os.path.exists(X_train_path) and os.path.exists(Y_train_path) and os.pat
         X_dataset[i] = image.numpy().squeeze()
         Y_dataset[i] = label
     
-    # Make all the images black and white
-    X_dataset = (X_dataset > 0.2).astype(np.float32)
-    
     # Split the data into training and testing sets
     X_train = X_dataset[:train_size]
     Y_train = Y_dataset[:train_size]
@@ -42,7 +40,8 @@ if not (os.path.exists(X_train_path) and os.path.exists(Y_train_path) and os.pat
 else:
     # Load the datasets from disk
     X_train = np.load(X_train_path)
-
+    Y_train = np.load(Y_train_path)
+    
     # Show example
     i = random.randint(0, len(X_train))
     plt.imshow(X_train[i], cmap="gray")
