@@ -48,7 +48,7 @@ class NCA(nn.Module):
             dense_output = self.dense1(reshaped_grid)  # Shape: (batch_size * height * width, n_dense)
             
             # Apply Relu
-            dense_output = torch.nn.functional(dense_output)
+            dense_output = torch.nn.functional.relu(dense_output)
             
             # Apply dense2 to map back to n_channels
             dense_output = self.dense2(dense_output)  # Shape: (batch_size * height * width, n_channels)
@@ -58,6 +58,16 @@ class NCA(nn.Module):
             delta_grid_c = delta_grid.clone()
             delta_grid_c[:,:,:,0]=0
             
+            # Creating alive cells mask
+            # Create the mask for positive `grid[..., 0]`
+            mask = grid[:, :, :, 0] > 0  # Shape: (batch_size, height, width)
+
+            # Expand the mask to match delta_grid's last dimension
+            mask = mask.unsqueeze(-1).expand_as(delta_grid)  # Shape: (batch_size, height, width, n_channels)
+
+            # Aplly the mask
+            delta_grid = delta_grid * mask           
+
             #add the delta grid to the grid
             grid = grid + delta_grid_c
         
