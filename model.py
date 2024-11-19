@@ -66,7 +66,7 @@ class NCA(nn.Module):
             mask = mask.unsqueeze(-1).expand_as(delta_grid)  # Shape: (batch_size, height, width, n_channels)
 
             # Aplly the mask
-            delta_grid = delta_grid * mask           
+            delta_grid_c = delta_grid_c * mask           
 
             #add the delta grid to the grid
             grid = grid + delta_grid_c
