@@ -60,13 +60,13 @@ class NCA(nn.Module):
             
             # Creating alive cells mask
             # Create the mask for positive `grid[..., 0]`
-            mask = grid[:, :, :, 0] > 0  # Shape: (batch_size, height, width)
+            mask = grid[:, :, :, 0] > 0.1  # Shape: (batch_size, height, width)
 
             # Expand the mask to match delta_grid's last dimension
             mask = mask.unsqueeze(-1).expand_as(delta_grid)  # Shape: (batch_size, height, width, n_channels)
 
-            # Aplly the mask
-            delta_grid = delta_grid * mask           
+            # Apply the mask
+            delta_grid_c = delta_grid_c * mask
 
             #add the delta grid to the grid
             grid = grid + delta_grid_c
