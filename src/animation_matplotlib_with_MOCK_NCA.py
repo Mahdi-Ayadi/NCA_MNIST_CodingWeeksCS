@@ -21,7 +21,7 @@ class Affiche_NCA:
     
 #####################################EXPLICATION#########################################################
 #Là, je code une classe MockNCA parce que pour voir si le code de la fonction animate_nca de  
-#l'animation matplotlib fonctionne bien, il me faut la foction update (cf ligne ) qu'on n'a   
+#l'animation matplotlib fonctionne bien, il me faut la foction update (cf ligne 75) qu'on n'a   
 #pas encore codée, du coup là elle est faite avec un random, le but étant juste de tester animate_nca
 #########################################################################################################
 
