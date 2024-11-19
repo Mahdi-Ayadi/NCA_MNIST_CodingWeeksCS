@@ -5,7 +5,7 @@ import tkinter as tk
 class DrawingApp:
     def __init__(self, root):
         self.root = root  # Store the main window reference
-        self.root.title("Drawing App")  # Set the window title 
+        self.root.title("Drawing App")  # Set the window title
         
         # Canvas configuration
         self.canvas_size = 1000  # Canvas size (1000x1000)
