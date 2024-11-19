@@ -5,6 +5,10 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import numpy as np
 
+# Define device (use GPU if available, otherwise CPU)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+
 class NCA(nn.Module):
     def __init__(self,width, height,n_channels,n_filters,n_dense,Tmin=50,Tmax=75):
         super().__init__()
@@ -35,7 +39,7 @@ class NCA(nn.Module):
             tensor:  size (batch_size,height,width,10)
         """
         batch_size = input.shape[0]
-        grid = torch.zeros((batch_size, self.height,self.width,self.n_channels), dtype=torch.float32)
+        grid = torch.zeros((batch_size, self.height, self.width, self.n_channels), dtype=torch.float32, device=input.device)
         grid[:,:,:,0]=input
         for period in range(self.update_time()):
             # Apply convolution (input: batch_size, channels, height, width)
@@ -89,13 +93,14 @@ def transform_labels_to_probagrid(inputs,labels):
             tensor:  size (batch_size,height,width,10)
         """
         batch_size, height, width = inputs.shape
-        transformed_labels = torch.zeros((batch_size,height,width,10))
+        transformed_labels = torch.zeros((batch_size, height, width, 10), device=inputs.device)
         for i in range(batch_size):
             transformed_labels [i,:,:,labels[i]]=(inputs[i, :, :] > 0.1).float()
         return transformed_labels
-    
+
+
 # Define the model
-model = NCA(width=28, height=28, n_channels=20, n_filters=64, n_dense=128, Tmin=50, Tmax=75)
+model = NCA(width=28, height=28, n_channels=20, n_filters=64, n_dense=128, Tmin=50, Tmax=75).to(device)
 
 # Define optimizer and loss
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -111,8 +116,8 @@ test_dataset = datasets.MNIST(root="./data", train=False, download=True, transfo
 
 # Create data loaders
 batch_size = 16
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
 print(next(iter(train_loader))[0].shape)
 
 # Training Loop
@@ -121,6 +126,7 @@ for epoch in range(epochs):
     model.train()
     total_loss = 0
     for inputs, labels in tqdm(train_loader):
+        inputs, labels = inputs.to(device), labels.to(device)
         optimizer.zero_grad()
 
         # Forward pass
