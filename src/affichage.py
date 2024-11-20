@@ -18,6 +18,7 @@ class Affiche_NCA():
             model_path (str): Path to the saved model file.
         """
         # If input is a NumPy array, convert it to a PyTorch tensor
+
         if isinstance(input, np.ndarray):
             input = torch.from_numpy(input).float()  # Convert to float32 tensor
 
@@ -62,13 +63,13 @@ class Affiche_NCA():
     
     #import the model
     def import_model(self,path = "model_full.pth"):
-        self.model = torch.load(path)
+        self.model = torch.load(path,map_location=device)
         self.model = self.model.to(device)  # Ensure the model is on the GPU
         self.model.eval()
     
     def initialise_grid(self,input):
         width,height = input.shape
         self.grid = torch.zeros(height,width,self.model.n_channels,device=device)
-        self.grid[:, :, 0] = input.clone().detach()
+        self.grid[:, :, 0] = input.clone().detach().to(device)
 
         
