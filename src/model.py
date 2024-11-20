@@ -40,7 +40,7 @@ class NCA(nn.Module):
         """
         batch_size = input.shape[0]
         grid = torch.zeros((batch_size, self.height, self.width, self.n_channels), dtype=torch.float32, device=input.device)
-        grid[:,:,:,0]=input
+        grid[:,:,:,0]=(input>0.1).float()
         for period in range(self.update_time()):
             # Apply convolution (input: batch_size, channels, height, width)
             convolved_grid = self.conv(grid.permute(0, 3, 1, 2))  # Permute to (batch_size, channels, height, width)
@@ -81,6 +81,55 @@ class NCA(nn.Module):
         proba_grid = proba_grid.view(-1,self.height,self.width,10)
         
         return proba_grid
+    
+    #perform a single update on the grid
+    def update_grid(self,grid):
+        """_summary_
+
+        Args:
+            grid (tensor): size (height,width,channels)
+
+        Returns:
+            tensor:  size (height,width,channels)
+        """
+        height,width,_=grid.shape
+        grid = grid.unsqueeze(0)
+        convolved_grid = self.conv(grid.permute(0, 3, 1, 2))  # Permute to (batch_size, channels, height, width)
+        convolved_grid = torch.nn.functional.relu(convolved_grid)  # Apply ReLU activation
+
+        reshaped_grid = convolved_grid.permute(0, 2, 3, 1).reshape(-1, self.n_filters)  # Flatten spatial dimensions
+        
+        # Apply dense1 to reduce dimensionality
+        dense_output = self.dense1(reshaped_grid)  # Shape: (batch_size * height * width, n_dense)
+        
+        # Apply Relu
+        dense_output = torch.nn.functional.relu(dense_output)
+        
+        # Apply dense2 to map back to n_channels
+        dense_output = self.dense2(dense_output)  # Shape: (batch_size * height * width, n_channels)
+        
+        # Reshape back to grid shape (batch_size, height, width, n_channels)
+        delta_grid = dense_output.view(-1, height, width, self.n_channels)
+        delta_grid_c = delta_grid.clone()
+        delta_grid_c[:,:,:,0]=0
+        
+        # Creating alive cells mask
+        # Create the mask for positive `grid[..., 0]`
+        mask = grid[:, :, :, 0] > 0.1  # Shape: (batch_size, height, width)
+
+        # Expand the mask to match delta_grid's last dimension
+        mask = mask.unsqueeze(-1).expand_as(delta_grid)  # Shape: (batch_size, height, width, n_channels)
+
+        # Apply the mask
+        delta_grid_c = delta_grid_c * mask
+
+        #add the delta grid to the grid
+        grid = grid + delta_grid_c
+        
+        grid = grid.squeeze(0)
+        return grid
+        
+        
 
 def transform_labels_to_probagrid(inputs,labels):
         """_summary_
@@ -98,67 +147,67 @@ def transform_labels_to_probagrid(inputs,labels):
             transformed_labels [i,:,:,labels[i]]=(inputs[i, :, :] > 0.1).float()
         return transformed_labels
 
+if __name__ == "__main__":
+    # Define the model
+    model = NCA(width=28, height=28, n_channels=20, n_filters=64, n_dense=128*4, Tmin=50, Tmax=75).to(device)
 
-# Define the model
-model = NCA(width=28, height=28, n_channels=20, n_filters=64, n_dense=128, Tmin=50, Tmax=75).to(device)
+    # Define optimizer and loss
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    criterion = nn.MSELoss()
 
-# Define optimizer and loss
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-criterion = nn.MSELoss()
+    # Import datasets
+    transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Lambda(lambda x: x.squeeze(0))
+        ])
+    train_dataset = datasets.MNIST(root="./data", train=True, download=True, transform=transform)
+    test_dataset = datasets.MNIST(root="./data", train=False, download=True, transform=transform)
 
-# Import datasets
-transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Lambda(lambda x: x.squeeze(0))
-    ])
-train_dataset = datasets.MNIST(root="./data", train=True, download=True, transform=transform)
-test_dataset = datasets.MNIST(root="./data", train=False, download=True, transform=transform)
+    # Create data loaders
+    batch_size = 16
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
+    print(next(iter(train_loader))[0].shape)
 
-# Create data loaders
-batch_size = 16
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
-print(next(iter(train_loader))[0].shape)
+    # Training Loop
+    epochs = 10
+    for epoch in range(epochs):
+        model.train()
+        total_loss = 0
+        for inputs, labels in tqdm(train_loader):
+            inputs, labels = inputs.to(device), labels.to(device)
+            optimizer.zero_grad()
 
-# Training Loop
-epochs = 5
-for epoch in range(epochs):
-    model.train()
-    total_loss = 0
-    for inputs, labels in tqdm(train_loader):
-        inputs, labels = inputs.to(device), labels.to(device)
-        optimizer.zero_grad()
+            # Forward pass
+            outputs = model(inputs)  # Shape: (batch_size, 28, 28, 10)
 
-        # Forward pass
-        outputs = model(inputs)  # Shape: (batch_size, 28, 28, 10)
-        
-        #transform labels
-        transformed_labels = transform_labels_to_probagrid(inputs,labels)
-        
-        # Compute loss
-        loss = criterion(outputs, transformed_labels)  # Flatten predictions and labels
-        loss.backward()
+            #transform labels
+            transformed_labels = transform_labels_to_probagrid(inputs,labels)
 
-        # Update weights
-        optimizer.step()
-        total_loss += loss.item()
+            # Compute loss
+            loss = criterion(outputs, transformed_labels)  # Flatten predictions and labels
+            loss.backward()
 
-    print(f"Epoch {epoch + 1}/{epochs}, Loss: {total_loss / len(train_loader):.4f}")
-    torch.save(model, "model_full.pth")
-    
+            # Update weights
+            optimizer.step()
+            total_loss += loss.item()
+
+        print(f"Epoch {epoch + 1}/{epochs}, Loss: {total_loss / len(train_loader):.4f}")
+        torch.save(model, "model_full.pth")
 
 
-# Evaluation Loop
-# model.eval()
-# correct = 0
-# total = 0
-# with torch.no_grad():
-#     for inputs, labels in test_loader:
-#         inputs = inputs  # Shape: (batch_size, 1, 28, 28)
-#         proba_grid = model(inputs)
-#         predictions = torch.argmax(proba_grid, dim=-1)  # Get class predictions
-#         correct += (predictions.view(-1) == labels.view(-1)).sum().item()
-#         total += labels.numel()
 
-# accuracy = 100 * correct / total
-# print(f"Test Accuracy: {accuracy:.2f}%")
+    # Evaluation Loop
+    # model.eval()
+    # correct = 0
+    # total = 0
+    # with torch.no_grad():
+    #     for inputs, labels in test_loader:
+    #         inputs = inputs  # Shape: (batch_size, 1, 28, 28)
+    #         proba_grid = model(inputs)
+    #         predictions = torch.argmax(proba_grid, dim=-1)  # Get class predictions
+    #         correct += (predictions.view(-1) == labels.view(-1)).sum().item()
+    #         total += labels.numel()
+
+    # accuracy = 100 * correct / total
+    # print(f"Test Accuracy: {accuracy:.2f}%")

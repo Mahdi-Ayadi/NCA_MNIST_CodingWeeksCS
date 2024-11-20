@@ -1,22 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from affichage import *
 
-class Affiche_NCA:
-    def __init__(self, input, color_map):
-        self.input = input
-        self.color_map = 'viridis'  # Utilisation d'une colormap valide pour imshow.
-
-    def transform(self):
-        return self.input
-
-    def next(self):
-        """
-        Génère une grille aléatoire (mock) pour simuler une évolution.
-        """
-        n, p = self.input.shape[:2]
-        return np.random.rand(n, p, 3)  # Dimensions séparées pour np.random.rand.
-    
     
     
 #####################################EXPLICATION#########################################################
@@ -55,25 +41,23 @@ initial_grid = np.random.uniform(0, 1, (28, 28, 3))
 
 
 
-def animate_nca(model, initial_grid, steps=100, interval=50):
+def animate_nca(initial_grid,color_map, steps=100, interval=50):
     """
     Crée une animation montrant l'évolution de la grille avec le modèle NCA.
     
-    :param model: Instance du modèle NCA.
     :param initial_grid: Grille de départ au format (n, n, channels).
     :param steps: Nombre d'étapes à visualiser.
     :param interval: Temps entre chaque frame (ms).
     """
-    nca_display = Affiche_NCA(initial_grid, color_map=None)
-    grid = initial_grid
+    nca_display = Affiche_NCA(initial_grid, color_map)
 
     fig, ax = plt.subplots()
-    img = ax.imshow(nca_display.next(), cmap=nca_display.color_map)
+    img = ax.imshow(nca_display.next())
 
     def update(frame):
-        nonlocal grid
-        grid = model.update(grid)  # Mise à jour de la grille
-        img.set_array(model.convert_to_rgb(grid))
+        nonlocal nca_display
+        # Mise à jour de l'image
+        img.set_array(nca_display.next())
         return [img]
 
     ani = animation.FuncAnimation(
@@ -81,7 +65,3 @@ def animate_nca(model, initial_grid, steps=100, interval=50):
     )
     plt.show()
 
-
-# Test de l'animation
-mock_model = MockNCA(channels=3)
-animate_nca(mock_model, initial_grid, steps=100, interval=50)
