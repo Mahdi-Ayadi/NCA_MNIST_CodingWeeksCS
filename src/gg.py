@@ -2,23 +2,12 @@ import pygame
 import sys
 import math
 import random
-from affichage import *
+
 # Initialize Pygame
 pygame.init()
-color_map = {
-    0: [224, 176, 255],    # Mauve
-    1: [255, 0, 255],      # Magenta
-    2: [0, 255, 255],      # Cyan
-    3: [0, 255, 0],        # Vert
-    4: [255, 192, 203],    # Rose
-    5: [0, 0, 139],        # Bleu foncé
-    6: [144, 238, 144],    # Vert clair
-    7: [169, 169, 169],    # Gris
-    8: [64, 224, 208],     # Turquoise
-    9: [139, 69, 19]       # Marron
-}
+
 # Constants
-WIDTH, HEIGHT = 600, 600
+WIDTH, HEIGHT = 800, 600
 MIN_CELL_SIZE = 5  # Minimum size of each cell
 MAX_CELL_SIZE = 50  # Maximum size of each cell
 SLIDER_WIDTH = 200
@@ -82,7 +71,7 @@ class Canvas:
     def update_animated_pixels(self):
         """Update the colors of animated pixels to random non-white colors."""
         for row, col in self.animated_pixels:
-            self.grid[row][col] = Affiche_NCA(np.sum(self.grid,axis=2)/3, color_map).next()[row,col]
+            self.grid[row][col] = random_color()
 
 # Slider drawing and interaction functions
 def draw_slider(surface, x, y, value, max_value, color):
