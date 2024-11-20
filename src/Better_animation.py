@@ -43,13 +43,27 @@ class Canvas:
         # Initialize the grid
         self.grid, self.grid_width, self.grid_height = self.create_grid(cell_size)
         self.animated_pixels = set()  # Track animated pixels for color change
+        self.set_new_input()
 
+    def set_new_input(self):
+        self.gird_animator = Affiche_NCA(self.adapt_grid_for_input(),color_map)
     def create_grid(self, cell_size):
         """Create a blank grid based on the cell size."""
         grid_width = self.width // cell_size
         grid_height = self.height // cell_size
         return [[BACKGROUND_COLOR for _ in range(grid_width)] for _ in range(grid_height)], grid_width, grid_height
 
+    def adapt_grid_for_input(self):
+        # Create a mask of booleans to determine if the cells are empty
+        input_mask = np.sum(np.array(self.grid), axis=2) != 255*3 
+        
+        # Convert the boolean mask to an integer array (1 for True, 0 for False)
+        int_mask = input_mask.astype(int)
+    
+        return int_mask
+    def adapt_grid_for_output(self,output):
+        return list(output)
+        
     def apply_brush(self, pos, brush_size, color):
         """Apply the brush to the grid based on mouse position and brush size."""
         x, y = pos
@@ -81,8 +95,8 @@ class Canvas:
 
     def update_animated_pixels(self):
         """Update the colors of animated pixels to random non-white colors."""
-        for row, col in self.animated_pixels:
-            self.grid[row][col] = Affiche_NCA(np.sum(self.grid,axis=2)/3, color_map).next()[row,col]
+        self.grid = self.adapt_grid_for_output(self.gird_animator.next())
+
 
 # Slider drawing and interaction functions
 def draw_slider(surface, x, y, value, max_value, color):
@@ -166,6 +180,7 @@ def main():
                 drawing = True
             if event.type == pygame.MOUSEBUTTONUP:
                 drawing = False
+                canvas.set_new_input()
 
             # Clear the board
             if event.type == pygame.KEYDOWN:

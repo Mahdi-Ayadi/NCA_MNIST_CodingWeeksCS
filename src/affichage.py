@@ -56,7 +56,7 @@ class Affiche_NCA:
             mask = number_grid_np == num
             RGB_grid_np[mask] = color  # Set RGB values for matching cells
 
-        return RGB_grid
+        return RGB_grid_np
 
     def next(self):
         # Update grid using the model
