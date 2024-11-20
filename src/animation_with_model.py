@@ -1,4 +1,4 @@
-from animation_matplotlib_with_MOCK_NCA import *
+from animate_nca import *
 import torch
 import torch.nn as nn
 from torchvision import transforms, datasets
