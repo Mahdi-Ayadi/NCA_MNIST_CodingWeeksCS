@@ -2,6 +2,7 @@ import tkinter as tk
 import numpy as np
 import random
 from PIL import Image, ImageTk
+from affichage import *
 
 # Dictionnaire des classes et couleurs correspondantes
 color_map = {
@@ -16,26 +17,6 @@ color_map = {
     8: [64, 224, 208],     # Turquoise
     9: [139, 69, 19]       # Marron
 }
-
-# Classe pour gérer l'affichage et la transformation des images
-class Affiche_NCA():
-    def __init__(self, input, color_map):
-        self.input = input
-        self.color_map = color_map
-        self.transform()
-
-    def transform(self):
-        """
-        Transforms the input image to a color image based on color_map.
-        """
-        return self.input
-
-    def next(self):
-        """
-        Returns a new colorized image with random colors.
-        """
-        n, p = self.input.shape
-        return np.random.rand(n, p, 3)  # Generates random RGB values
 
 
 class DrawingApp:

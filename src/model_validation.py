@@ -18,18 +18,18 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, pin_
 
 # Load the entire model and move it to GPU
 model = torch.load("model_full.pth")
-model = model.to("cuda")  # Ensure the model is on the GPU
+model = model.to(device)  # Ensure the model is on the GPU
 model.eval()
 
 # Get a batch from the test loader
 
 example = next(iter(test_loader))
-input_images = example[0].to("cuda")  # Move the input image to GPU
-output_grids = model(example[0].to("cuda"))  # Model inference on GPU
-labels = example[1].to("cuda")  # Move the label to GPU
+input_images = example[0].to(device)  # Move the input image to GPU
+output_grids = model(example[0].to(device))  # Model inference on GPU
+labels = example[1].to(device)  # Move the label to GPU
 
 # Process output
-output_images = torch.zeros_like(input_images, device="cuda")  # Ensure the output tensor is on GPU
+output_images = torch.zeros_like(input_images, device=device)  # Ensure the output tensor is on GPU
 input_mask = input_images > 0.1
 _,height, width = input_images.shape
 print(input_images.shape)
