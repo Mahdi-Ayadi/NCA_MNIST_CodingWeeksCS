@@ -4,10 +4,12 @@ import torch
 import torch.nn as nn
 from torchvision import transforms, datasets
 from torch.utils.data import DataLoader
-import numpy as np
 from model import *
 
-class Affiche_NCA():
+# Set device (GPU if available, otherwise CPU)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+class Affiche_NCA:
     def __init__(self, input, color_map, model_path="model_full.pth"):
         """
         Initialize the model with the input grid, color map, and model path.
@@ -53,22 +55,21 @@ class Affiche_NCA():
             mask = number_grid_np == num
             RGB_grid_np[mask] = color  # Set RGB values for matching cells
 
-
         return RGB_grid
-    
-    def next(self):
-        self.grid=self.model.update_grid(self.grid)
-        return self.generate_RGB_grid()
-    
-    #import the model
-    def import_model(self,path = "model_full.pth"):
-        self.model = torch.load(path)
-        self.model = self.model.to(device)  # Ensure the model is on the GPU
-        self.model.eval()
-    
-    def initialise_grid(self,input):
-        width,height = input.shape
-        self.grid = torch.zeros(height,width,self.model.n_channels,device=device)
-        self.grid[:, :, 0] = input.clone().detach()
 
-        
+    def next(self):
+        # Update grid using the model
+        self.grid = self.model.update_grid(self.grid)
+        return self.generate_RGB_grid()
+
+    def import_model(self, path="model_full.pth"):
+        # Load model and map it to the device (GPU or CPU)
+        self.model = torch.load(path, map_location=device)
+        self.model = self.model.to(device)  # Ensure the model is on the correct device
+        self.model.eval()
+
+    def initialise_grid(self, input):
+        # Initialize the grid on the correct device
+        width, height = input.shape
+        self.grid = torch.zeros(height, width, self.model.n_channels, device=device)
+        self.grid[:, :, 0] = input.clone().detach().to(device)
