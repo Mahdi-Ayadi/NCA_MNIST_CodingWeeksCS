@@ -81,6 +81,56 @@ class NCA(nn.Module):
         proba_grid = proba_grid.view(-1,self.height,self.width,10)
         
         return proba_grid
+    
+    #perform a single update on the grid
+    def update_grid(self,grid):
+        """_summary_
+
+        Args:
+            grid (tensor): size (height,width,channels)
+
+        Returns:
+            tensor:  size (height,width,channels)
+        """
+        with torch.no_grad():
+            height,width,_=grid.shape
+            grid = grid.unsqueeze(0)
+            convolved_grid = self.conv(grid.permute(0, 3, 1, 2))  # Permute to (batch_size, channels, height, width)
+            convolved_grid = torch.nn.functional.relu(convolved_grid)  # Apply ReLU activation
+
+            reshaped_grid = convolved_grid.permute(0, 2, 3, 1).reshape(-1, self.n_filters)  # Flatten spatial dimensions
+            
+            # Apply dense1 to reduce dimensionality
+            dense_output = self.dense1(reshaped_grid)  # Shape: (batch_size * height * width, n_dense)
+            
+            # Apply Relu
+            dense_output = torch.nn.functional.relu(dense_output)
+            
+            # Apply dense2 to map back to n_channels
+            dense_output = self.dense2(dense_output)  # Shape: (batch_size * height * width, n_channels)
+            
+            # Reshape back to grid shape (batch_size, height, width, n_channels)
+            delta_grid = dense_output.view(-1, height, width, self.n_channels)
+            delta_grid_c = delta_grid.clone()
+            delta_grid_c[:,:,:,0]=0
+            
+            # Creating alive cells mask
+            # Create the mask for positive `grid[..., 0]`
+            mask = grid[:, :, :, 0] > 0.1  # Shape: (batch_size, height, width)
+
+            # Expand the mask to match delta_grid's last dimension
+            mask = mask.unsqueeze(-1).expand_as(delta_grid)  # Shape: (batch_size, height, width, n_channels)
+
+            # Apply the mask
+            delta_grid_c = delta_grid_c * mask
+
+            #add the delta grid to the grid
+            grid = grid + delta_grid_c
+            
+            grid = grid.squeeze(0)
+        return grid
+        
+        
 
 def transform_labels_to_probagrid(inputs,labels):
         """_summary_

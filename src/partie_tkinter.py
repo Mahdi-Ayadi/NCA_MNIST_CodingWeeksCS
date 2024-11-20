@@ -1,23 +1,22 @@
 import tkinter as tk
 import numpy as np
-import random
 from PIL import Image, ImageTk
+import random
 
 # Dictionnaire des classes et couleurs correspondantes
 color_map = {
-    0: [224, 176, 255],    # Mauve
-    1: [255, 0, 255],      # Magenta
-    2: [0, 255, 255],      # Cyan
-    3: [0, 255, 0],        # Vert
+    0: [255, 0, 0],        # rouge
+    1: [0, 255, 0],        # vert
+    2: [0, 0, 0],          # noir
+    3: [255, 165, 0],      # orange
     4: [255, 192, 203],    # Rose
-    5: [0, 0, 139],        # Bleu foncé
-    6: [144, 238, 144],    # Vert clair
+    5: [0, 0, 139],        # Bleu 
+    6: [255, 255, 0],      # jaune
     7: [169, 169, 169],    # Gris
-    8: [64, 224, 208],     # Turquoise
+    8: [238, 130, 238],    # violet
     9: [139, 69, 19]       # Marron
 }
 
-# Classe pour gérer l'affichage et la transformation des images
 class Affiche_NCA():
     def __init__(self, input, color_map):
         self.input = input
@@ -109,8 +108,8 @@ class DrawingApp:
         # Update the image only if the user is not drawing
         if not self.is_drawing:
             self.colorize_with_next()  # Perform one update now
-        # Schedule the next update in 500 ms
-        self.root.after(500, self.update_colorize)
+        # Schedule the next update in 100 ms (10 FPS)
+        self.root.after(33, self.update_colorize)
 
     def fill_color_palette(self):
         # Fill the color palette with a gradient of colors
