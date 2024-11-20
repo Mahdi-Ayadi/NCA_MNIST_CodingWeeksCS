@@ -20,6 +20,7 @@ class Affiche_NCA:
             model_path (str): Path to the saved model file.
         """
         # If input is a NumPy array, convert it to a PyTorch tensor
+
         if isinstance(input, np.ndarray):
             input = torch.from_numpy(input).float()  # Convert to float32 tensor
 
