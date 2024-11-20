@@ -6,15 +6,15 @@ from affichage import *
 # Initialize Pygame
 pygame.init()
 color_map = {
-    0: [224, 176, 255],    # Mauve
-    1: [255, 0, 255],      # Magenta
-    2: [0, 255, 255],      # Cyan
-    3: [0, 255, 0],        # Vert
+    0: [255, 0, 0],        # rouge
+    1: [0, 255, 0],        # vert
+    2: [0, 0, 0],          # noir
+    3: [255, 165, 0],      # orange
     4: [255, 192, 203],    # Rose
-    5: [0, 0, 139],        # Bleu foncé
-    6: [144, 238, 144],    # Vert clair
+    5: [0, 0, 139],        # Bleu 
+    6: [255, 255, 0],      # jaune
     7: [169, 169, 169],    # Gris
-    8: [64, 224, 208],     # Turquoise
+    8: [238, 130, 238],    # violet
     9: [139, 69, 19]       # Marron
 }
 # Constants
