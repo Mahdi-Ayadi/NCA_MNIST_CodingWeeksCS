@@ -58,6 +58,9 @@ class NCA(nn.Module):
             # Apply dense2 to map back to n_channels
             dense_output = self.dense2(dense_output)  # Shape: (batch_size * height * width, n_channels)
             
+            # Apply custom activation function
+            dense_output=torch.nn.functional.relu(dense_output-1) - torch.nn.functional.relu(-dense_output-1)
+            
             # Reshape back to grid shape (batch_size, height, width, n_channels)
             delta_grid = dense_output.view(-1, self.height, self.width, self.n_channels)
             delta_grid_c = delta_grid.clone()
@@ -108,6 +111,9 @@ class NCA(nn.Module):
             
             # Apply dense2 to map back to n_channels
             dense_output = self.dense2(dense_output)  # Shape: (batch_size * height * width, n_channels)
+            
+            # Apply custom activation function
+            dense_output=torch.nn.functional.relu(dense_output-1) - torch.nn.functional.relu(-dense_output-1)
             
             # Reshape back to grid shape (batch_size, height, width, n_channels)
             delta_grid = dense_output.view(-1, height, width, self.n_channels)
@@ -194,7 +200,7 @@ if __name__ == "__main__":
             total_loss += loss.item()
 
         print(f"Epoch {epoch + 1}/{epochs}, Loss: {total_loss / len(train_loader):.4f}")
-        torch.save(model, "model_full.pth")
+        torch.save(model, "model_full_with_modified_relu.pth")
 
 
 
