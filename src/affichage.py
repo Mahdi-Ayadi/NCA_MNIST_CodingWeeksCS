@@ -8,15 +8,28 @@ import numpy as np
 from model import *
 
 class Affiche_NCA():
-    def __init__(self, input, color_map,model_path= "model_full.pth"):
-        #import the model
+    def __init__(self, input, color_map, model_path="model_full.pth"):
+        """
+        Initialize the model with the input grid, color map, and model path.
+
+        Args:
+            input (numpy.ndarray or torch.Tensor): The input grid to initialize.
+            color_map: A color map for visualization.
+            model_path (str): Path to the saved model file.
+        """
+        # If input is a NumPy array, convert it to a PyTorch tensor
+        if isinstance(input, np.ndarray):
+            input = torch.from_numpy(input).float()  # Convert to float32 tensor
+
+        # Import the model
         self.import_model(model_path)
-        #initialise the grid
+
+        # Initialize the grid
         self.initialise_grid(input)
-        
-        #define attributes
+
+        # Define attributes
         self.color_map = color_map
-    
+
     def generate_RGB_grid(self):
         # Extract dimensions
         height, width, _ = self.grid.shape
@@ -56,5 +69,6 @@ class Affiche_NCA():
     def initialise_grid(self,input):
         width,height = input.shape
         self.grid = torch.zeros(height,width,self.model.n_channels,device=device)
-        self.grid[:,:,0]=torch.tensor(input)[:,:]
+        self.grid[:, :, 0] = input.clone().detach()
+
         

@@ -4,7 +4,7 @@ import torch.nn as nn
 from torchvision import transforms, datasets
 from torch.utils.data import DataLoader
 import numpy as np
-#importing an exemple image of shape(width,height)
+#importing an exemple image numpy array or tensor of shape(width,height)
 transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Lambda(lambda x: x.squeeze(0))
