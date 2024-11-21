@@ -116,13 +116,6 @@ Il faut :  - faire tourner le code du fichier main.py
             elle la colore grâce à matplotlib.animation puis elle 
             s'affiche grâce à affichage.py
 
-            2) fichier src/animation/animation_tkinter.py :
-            Grâce au module tkinter, on a pu créer une interface 
-            utilisateur qui permet de dessiner un chiffre à la 
-            main et de le colorier d'une maniere random, on a 
-            remarqué que l'interface tkinter était trop lente par 
-            rapport à pygame, on s'intéressera donc plutôt à pygame
-            par la suite
 
             3) fichier src/animation/Better_animation.py :
             Grâce au module pygame, on a pu créer une 
