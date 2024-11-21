@@ -70,7 +70,7 @@ __init__(input, color_map)
 Next_img() --> n,n,3
 
 
-# Modules à avoir poue faire tourner le code 
+# Modules à avoir pour faire tourner le code 
 
 Il faudra avoir les modules : - numpy
                               - matplotlib (matplotlib.pyplot, matplotlib.animation)
@@ -121,10 +121,6 @@ Il faut :  - faire tourner le code du fchier better_animation
             3) fichier better_animation.py
             grâce au module pygame, on a réussi à créer une interface sur laquelle on dessine un chiffre qui sera reconnu selon le code couleur énoncé plutôt
 
-
-# Results
-
-Nous avons tracé les courbes des différentes accuracy en fonction du temps pour tous les chiffres
 
 
 
