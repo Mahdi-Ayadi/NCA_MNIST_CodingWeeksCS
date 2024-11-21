@@ -88,9 +88,13 @@ Il faudra avoir les modules : - numpy
 # Comment avoir la démo ?
 
 Il faut :  - faire tourner le code du fchier better_animation
+
            - dessiner un chiffre
+
            - appuyer sur la lettre 'a' du clavier
+
            - Voir si le résultat correspond à la palette suivante : 
+           
                 - 0 : rouge
                 - 1 : vert
                 - 2 : noir
