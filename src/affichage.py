@@ -10,7 +10,7 @@ from model import *
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class Affiche_NCA:
-    def __init__(self, input, color_map, model_path="model_full.pth"):
+    def __init__(self, input, color_map, model_path="model_full_delta_scaled (4).pth"):
         """
         Initialize the model with the input grid, color map, and model path.
 

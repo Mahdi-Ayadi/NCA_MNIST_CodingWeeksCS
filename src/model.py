@@ -72,7 +72,11 @@ class NCA(nn.Module):
 
             # Apply the mask
             delta_grid_c = delta_grid_c * mask
-
+            
+            # Scaling delta_grid with the last channel of the grid
+            last_channel = grid[:, :, :, -1].unsqueeze(-1)  # Extract the last channel and maintain the dimensions
+            delta_grid_c = delta_grid_c * torch.nn.functional.sigmoid(last_channel)
+            
             #add the delta grid to the grid
             grid = grid + delta_grid_c
         
@@ -124,6 +128,10 @@ class NCA(nn.Module):
             # Apply the mask
             delta_grid_c = delta_grid_c * mask
 
+            # Scaling delta_grid with the last channel of the grid
+            last_channel = grid[:, :, :, -1].unsqueeze(-1)  # Extract the last channel and maintain the dimensions
+            delta_grid_c = delta_grid_c * torch.nn.functional.sigmoid(last_channel)  # Scale delta_grid_c element-wise by the last channel
+            
             #add the delta grid to the grid
             grid = grid + delta_grid_c
             
@@ -194,7 +202,7 @@ if __name__ == "__main__":
             total_loss += loss.item()
 
         print(f"Epoch {epoch + 1}/{epochs}, Loss: {total_loss / len(train_loader):.4f}")
-        torch.save(model, "model_full.pth")
+        torch.save(model, "model_full_delta_scaled.pth")
 
 
 

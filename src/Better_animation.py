@@ -44,6 +44,7 @@ class Canvas:
         self.grid, self.grid_width, self.grid_height = self.create_grid(cell_size)
         self.animated_pixels = set()  # Track animated pixels for color change
         self.set_new_input()
+        self.index =0
 
     def set_new_input(self):
         self.gird_animator = Affiche_NCA(self.adapt_grid_for_input(),color_map)
@@ -96,6 +97,12 @@ class Canvas:
     def update_animated_pixels(self):
         """Update the colors of animated pixels to random non-white colors."""
         self.grid = self.adapt_grid_for_output(self.gird_animator.next())
+    def print_exemple(self):
+        L=list(self.animated_pixels)
+        x,y = L[self.index]
+        print(self.gird_animator.grid[x,y,:])
+        
+        
 
 
 # Slider drawing and interaction functions
@@ -189,6 +196,8 @@ def main():
 
                 if event.key == pygame.K_a:  # Press 'A' to toggle animation
                     animating = not animating
+                if event.key == pygame.K_p:
+                    canvas.print_exemple()
 
         # Apply brush if drawing and not interacting with sliders
         if drawing and not interacting_with_slider:
