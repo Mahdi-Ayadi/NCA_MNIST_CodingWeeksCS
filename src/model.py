@@ -158,7 +158,7 @@ def transform_labels_to_probagrid(inputs,labels):
 
 if __name__ == "__main__":
     # Define the model
-    model = NCA(width=28, height=28, n_channels=20, n_filters=64, n_dense=128*4, Tmin=50, Tmax=75).to(device)
+    model = NCA(width=28, height=28, n_channels=25, n_filters=80, n_dense=128*4, Tmin=50, Tmax=150).to(device)
 
     # Define optimizer and loss
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
