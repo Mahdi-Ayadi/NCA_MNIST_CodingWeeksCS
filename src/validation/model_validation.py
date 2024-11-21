@@ -50,7 +50,7 @@ def accuracy(dataset, n_steps, model):
     accuracy_table = np.zeros((n_steps), dtype=np.float64)
     percentages_table = np.zeros((N, n_steps), dtype=np.float64)
     for i, (input, label) in tqdm(enumerate(dataset), total=len(dataset), desc="Processing"):
-        percentages_table[i] = accuracy_per_image(input.squeeze(0), label.squeeze(0) ,n_steps)
+        percentages_table[i] = accuracy_per_image(input.squeeze(0), label.squeeze(0), n_steps)
     accuracy_table = np.mean(percentages_table,axis=0)
     return accuracy_table
     
