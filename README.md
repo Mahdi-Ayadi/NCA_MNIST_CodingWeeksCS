@@ -112,20 +112,20 @@ Il faut :  - faire tourner le code du fchier better_animation
 
 # MVP
 
-            1) fichier animation_with_model.py
-            en input, cette fonction prend une image du database,
+            1) fichier animation_with_model.py :
+            En input, cette fonction prend une image du database,
             elle la colore grâce à matplotlib.animation puis elle 
             s'affiche grâce à affichage.py
 
-            2) fichier partie_tkinter.py
-            grâce au module tkinter, on a pu créer une interface 
+            2) fichier partie_tkinter.py :
+            Grâce au module tkinter, on a pu créer une interface 
             utilisateur qui permet de dessiner un chiffre à la 
             main et de le colorier d'une maniere random, on a 
             remarqué que l'interface tkinter était trop lente par 
             rapport à pygame, on s'est plutôt intéressé à pygame
 
-            3) fichier better_animation.py
-            grâce au module pygame, on a réussi à créer une 
+            3) fichier better_animation.py :
+            Grâce au module pygame, on a réussi à créer une 
             interface sur laquelle on dessine un chiffre qui sera 
             reconnu selon le code couleur énoncé plutôt
 
