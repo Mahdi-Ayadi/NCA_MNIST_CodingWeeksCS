@@ -122,10 +122,11 @@ Il faut :  - faire tourner le code du fchier better_animation
             utilisateur qui permet de dessiner un chiffre à la 
             main et de le colorier d'une maniere random, on a 
             remarqué que l'interface tkinter était trop lente par 
-            rapport à pygame, on s'est plutôt intéressé à pygame
+            rapport à pygame, on s'intéressera donc plutôt à pygame
+            par la suite
 
             3) fichier better_animation.py :
-            Grâce au module pygame, on a réussi à créer une 
+            Grâce au module pygame, on a pu créer une 
             interface sur laquelle on dessine un chiffre qui sera 
             reconnu selon le code couleur énoncé plutôt
 
