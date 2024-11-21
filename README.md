@@ -68,7 +68,39 @@ Class Affichage _NCA :
 __init__(input, color_map)
 
 Next_img() --> n,n,3
- 
+
+
+# Modules à avoir poue faire tourner le code 
+
+Il faudra avoir les modules : - numpy
+                              - matplotlib (matplotlib.pyplot, matplotlib.animation)
+                              - pytorch (torch, torch.nn, torchvision, torch.utils.data, )
+                              - pygame
+                              - sys
+                              - math
+                              - random
+                              - os
+                              - PIL (Image, ImageDraw)
+                              - tkinter
+                              - tqdm
+                              
+
+# Comment avoir la démo ?
+
+Il faut :  - faire tourner le code du fchier better_animation
+           - dessiner un chiffre
+           - appuyer sur la lettre 'a' du clavier
+           - Voir si le résultat correspond à la palette suivante : 
+                - 0 : rouge
+                - 1 : vert
+                - 2 : noir
+                - 3 : orange
+                - 4 : rose
+                - 5 : bleu 
+                - 6 : jaune 
+                - 7 : gris
+                - 8 : violet
+                - 9 : marron
 
 
 
