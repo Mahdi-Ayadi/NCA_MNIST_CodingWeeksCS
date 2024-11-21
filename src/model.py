@@ -76,11 +76,8 @@ class NCA(nn.Module):
             #add the delta grid to the grid
             grid = grid + delta_grid_c
         
-        proba_grid = grid[:,:,:,1:11].view(-1,10)
-        proba_grid = torch.nn.functional.softmax(proba_grid , dim=1)
-        proba_grid = proba_grid.view(-1,self.height,self.width,10)
-        
-        return proba_grid
+        logits = grid[:, :, :, 1:11].view(-1, 10)  # Logits for cross-entropy loss
+        return logits
     
     #perform a single update on the grid
     def update_grid(self,grid):
@@ -154,7 +151,7 @@ if __name__ == "__main__":
 
     # Define optimizer and loss
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
-    criterion = nn.MSELoss()
+    criterion = nn.CrossEntropyLoss()
 
     # Import datasets
     transform = transforms.Compose([
@@ -172,21 +169,26 @@ if __name__ == "__main__":
 
     # Training Loop
     epochs = 10
+    
+    # Retrieve a single batch to calculate height and width
+    sample_batch = next(iter(train_loader))[0]
+    _, height, width = sample_batch.shape  # Get the dimensions (batch_size, height, width)
+
+    # Training Loop
     for epoch in range(epochs):
         model.train()
         total_loss = 0
         for inputs, labels in tqdm(train_loader):
             inputs, labels = inputs.to(device), labels.to(device)
+
             optimizer.zero_grad()
+            logits = model(inputs)  # Shape: (batch_size * height * width, num_classes)
 
-            # Forward pass
-            outputs = model(inputs)  # Shape: (batch_size, 28, 28, 10)
-
-            #transform labels
-            transformed_labels = transform_labels_to_probagrid(inputs,labels)
+            # Dynamically repeat labels for each pixel
+            labels = labels.repeat_interleave(height * width)  # Shape: (batch_size * height * width)
 
             # Compute loss
-            loss = criterion(outputs, transformed_labels)  # Flatten predictions and labels
+            loss = criterion(logits, labels)
             loss.backward()
 
             # Update weights
@@ -194,7 +196,7 @@ if __name__ == "__main__":
             total_loss += loss.item()
 
         print(f"Epoch {epoch + 1}/{epochs}, Loss: {total_loss / len(train_loader):.4f}")
-        torch.save(model, "model_full.pth")
+        torch.save(model, "model_cross_entropy.pth")
 
 
 
