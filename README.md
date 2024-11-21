@@ -48,7 +48,7 @@ F15: Ajout des courbes d'évolution de la précision (précision générale, pr�
 
  Class NCA: -width  -height  -N channels -N filters [3,3,20]
 
-Method= NCA(channel_n=CHANNEL_N, fire_rate=CELL_FIRE_RATE,add_noise=ADD_NOISE)
+Method= NCA(width, height, n_channels, n_filters, n_dense, Tmin, Tmax)
 
 Model(input)
 
@@ -58,10 +58,10 @@ Affiche(n,n,1) --> n,n,3
 
 Forward(grid0) --> gridTR
 
-Update{gridn) --> gridn+1
+Update(gridn) --> gridn+1
 
 Convertir(grid: n, n ,20 --> n,n,3)
-==> TKINTER
+==> Pygame
 
 Class Affichage _NCA :
 
@@ -81,13 +81,12 @@ Il faudra avoir les modules : - numpy
                               - random
                               - os
                               - PIL (Image, ImageDraw)
-                              - tkinter
                               - tqdm
                               
 
 # Comment avoir la démo ?
 
-Il faut :  - faire tourner le code du fchier better_animation
+Il faut :  - faire tourner le code du fichier main.py
 
            - dessiner un chiffre
 
@@ -112,12 +111,12 @@ Il faut :  - faire tourner le code du fchier better_animation
 
 # MVP
 
-            1) fichier animation_with_model.py :
+            1) fichier src/animation/animation_with_model.py :
             En input, cette fonction prend une image du database,
             elle la colore grâce à matplotlib.animation puis elle 
             s'affiche grâce à affichage.py
 
-            2) fichier partie_tkinter.py :
+            2) fichier src/animation/animation_tkinter.py :
             Grâce au module tkinter, on a pu créer une interface 
             utilisateur qui permet de dessiner un chiffre à la 
             main et de le colorier d'une maniere random, on a 
@@ -125,7 +124,7 @@ Il faut :  - faire tourner le code du fchier better_animation
             rapport à pygame, on s'intéressera donc plutôt à pygame
             par la suite
 
-            3) fichier better_animation.py :
+            3) fichier src/animation/Better_animation.py :
             Grâce au module pygame, on a pu créer une 
             interface sur laquelle on dessine un chiffre qui sera 
             reconnu selon le code couleur énoncé plutôt

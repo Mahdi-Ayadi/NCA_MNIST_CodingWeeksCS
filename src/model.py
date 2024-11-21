@@ -10,7 +10,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
 class NCA(nn.Module):
-    def __init__(self,width, height,n_channels,n_filters,n_dense,Tmin=50,Tmax=75):
+    def __init__(self,width, height,n_channels,n_filters,n_dense,Tmin=50,Tmax=150):
         super().__init__()
         # defining attributes:
         self.width =width

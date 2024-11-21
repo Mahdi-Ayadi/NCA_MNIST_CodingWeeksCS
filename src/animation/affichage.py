@@ -4,6 +4,10 @@ import torch
 import torch.nn as nn
 from torchvision import transforms, datasets
 from torch.utils.data import DataLoader
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from model import *
 
 # Set device (GPU if available, otherwise CPU)
