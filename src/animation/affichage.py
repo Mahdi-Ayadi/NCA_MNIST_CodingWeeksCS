@@ -4,17 +4,12 @@ import torch
 import torch.nn as nn
 from torchvision import transforms, datasets
 from torch.utils.data import DataLoader
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from model import *
 
 # Set device (GPU if available, otherwise CPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class Affiche_NCA:
-    def __init__(self, input, color_map, model_path="model_full.pth"):
+    def __init__(self, input, color_map, model_path="model_full_4.pth"):
         """
         Initialize the model with the input grid, color map, and model path.
 
@@ -67,7 +62,7 @@ class Affiche_NCA:
         self.grid = self.model.update_grid(self.grid)
         return self.generate_RGB_grid()
 
-    def import_model(self, path="model_full.pth"):
+    def import_model(self, path):
         # Load model and map it to the device (GPU or CPU)
         self.model = torch.load(path, map_location=device)
         self.model = self.model.to(device)  # Ensure the model is on the correct device

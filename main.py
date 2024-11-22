@@ -4,5 +4,6 @@
     Pour lancer l'application, il suffit d'exécuter le code.
 """
 
-from src.animation.Better_animation import main
+from src.animation.animation_pygame import main
+from src.model import *
 main()
