@@ -47,7 +47,7 @@ F15: Ajout des courbes d'évolution de la précision (précision générale, pr�
 
 # Modèle
 
-![Texte alternatif](src/model.png)
+![Texte alternatif](src/Model.png)
 
 #  Conception
 
