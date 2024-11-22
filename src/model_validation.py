@@ -56,7 +56,7 @@ def accuracy(dataset, n_steps, model):
     
 if __name__ == "__main__":
     # To choose to calculate the accuracy for each number independently or for the entire dataset as a whole
-    accuracy_per_number = True
+    accuracy_per_number = False
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = torch.load('model_full_2.pth', map_location=device)
