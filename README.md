@@ -51,29 +51,59 @@ F15: Ajout des courbes d'évolution de la précision (précision générale, pr�
 
 #  Conception
 
- Class NCA: -width  -height  -N channels -N filters [3,3,20]
+Class NCA:
 
+Cette classe implémente le cœur de l'automate cellulaire neuronal. Elle contient les paramètres et les méthodes nécessaires pour définir, initialiser et mettre à jour l'état du réseau de cellules.
+
+Attributs:
+
+width et height : Dimensions de la grille. ==>
+Définissent la largeur et la hauteur du réseau cellulaire.
+
+n_channels : Nombre de canaux internes. ==>
+Représente les états internes des cellules (par exemple, 20 canaux).
+
+n_filters : Nombre de filtres convolutifs. ==>
+Spécifie les dimensions et la profondeur des filtres (par ex. [3, 3, 20]).
+
+Tmin, Tmax : Paramètres temporels.==>
+Fixent les bornes pour les itérations d'évolution de la grille.
 Method= NCA(width, height, n_channels, n_filters, n_dense, Tmin, Tmax)
 
-Model(input)
+Méthodes :
 
-Methodes: 
+forward(grid0) :
+Effectue une étape d'évolution sur l'état initial grid0, renvoyant une nouvelle grille transformée.
 
-Affiche(n,n,1) --> n,n,3
+update(gridn) :
+Applique les règles locales d'automate pour calculer l'état suivant de la grille (gridn+1).
 
-Forward(grid0) --> gridTR
-
-Update(gridn) --> gridn+1
-
-Convertir(grid: n, n ,20 --> n,n,3)
-==> Pygame
+convertir(grid) :
+Transforme une grille interne avec n_channels=20 en une grille RGB (n_channels=3) pour l'affichage.
 
 Class Affichage _NCA :
 
-__init__(input, color_map)
+Cette classe est responsable de la gestion et de l'affichage des états de grille produits par le modèle NCA, en utilisant une carte de couleurs ou d'autres transformations visuelles.
 
-Next_img() --> n,n,3
 
+Attributs :
+
+input_grid :
+Grille d'entrée ou sortie du modèle NCA à visualiser.
+
+color_map :
+Carte de couleurs définissant comment les états des cellules sont mappés aux couleurs (par exemple, une palette RGB).
+
+Méthodes :
+
+__init__(input_grid, color_map) :
+Initialise la classe avec la grille et la carte de couleurs.
+
+next_img() :
+Génère l'image suivante basée sur l'état actuel de la grille, prête pour l'affichage en RGB.
+
+
+![Texte alternatif](src/tableau_desc.png)
 
 # Modules à avoir pour faire tourner le code 
 
