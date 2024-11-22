@@ -3,8 +3,6 @@ import sys
 import math
 import random
 import numpy as np
-# import sys
-# sys.path.append('/src/animation')
 from .affichage import Affiche_NCA
 
 # Initialisation de Pygame
