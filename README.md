@@ -1,4 +1,13 @@
 # MNIST_NCA
+## Auteurs:
+Mahdi Ayadi     
+Aymen Awainia                       
+Youssef Blaiech 
+Myriam Akrout
+Rayen Soufargi 
+Chaima Baccara
+
+
 
 ## Description
 
