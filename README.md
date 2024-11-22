@@ -122,7 +122,38 @@ Il faut :  - faire tourner le code du fichier main.py
             interface sur laquelle on dessine un chiffre qui sera 
             reconnu selon le code couleur énoncé plutôt
 
+# The models
 
+Model 1: 
+    Loss: MSE
+    n_channels = 20
+    n_filters = 64
+    Tmin = 50
+    Tmax = 100
+
+Model 2: 
+    Loss: MSE
+    n_channels = 25
+    n_filters = 80
+    Tmin = 50
+    Tmax = 150
+
+Model 3: 
+This model is similar to Model 1 but we added a multiplication by the sigmoid applied to the last channel of the cell 
+(To train the model to push the values of delta to approach 0)
+    Loss: MSE
+    n_channels = 20
+    n_filters = 64
+    Tmin = 50
+    Tmax = 100
+
+Model 4: 
+In this model too we add a multiplication by the sigmoid applied to the last channel of the cell 
+    Loss: CrossEntropy
+    n_channels = 20
+    n_filters = 64
+    Tmin = 50
+    Tmax = 100
 
 
 ## Installation
