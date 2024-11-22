@@ -1,38 +1,49 @@
+"""
+Module for visualizing Neural Cellular Automata (NCA) behavior using RGB grids.
+"""
+
 import numpy as np
-import matplotlib.animation as animate
 import torch
 import torch.nn as nn
-from torchvision import transforms, datasets
-from torch.utils.data import DataLoader
 
 # Set device (GPU if available, otherwise CPU)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-class Affiche_NCA:
-    def __init__(self, input, color_map, model_path="model_full_4.pth"):
+
+class AfficheNCA:
+    """
+    Class to handle visualization and grid updates for an NCA model.
+    """
+
+    def __init__(self, input_grid, color_map, model_path="model_full_4.pth"):
         """
         Initialize the model with the input grid, color map, and model path.
 
         Args:
-            input (numpy.ndarray or torch.Tensor): The input grid to initialize.
-            color_map: A color map for visualization.
+            input_grid (numpy.ndarray or torch.Tensor): The input grid to initialize.
+            color_map (dict): A dictionary mapping numbers to RGB colors.
             model_path (str): Path to the saved model file.
         """
-        # If input is a NumPy array, convert it to a PyTorch tensor
-
-        if isinstance(input, np.ndarray):
-            input = torch.from_numpy(input).float()  # Convert to float32 tensor
+        # Convert input to a PyTorch tensor if it's a NumPy array
+        if isinstance(input_grid, np.ndarray):
+            input_grid = torch.from_numpy(input_grid).float()
 
         # Import the model
         self.import_model(model_path)
 
         # Initialize the grid
-        self.initialise_grid(input)
+        self.initialize_grid(input_grid)
 
         # Define attributes
         self.color_map = color_map
 
-    def generate_RGB_grid(self):
+    def generate_rgb_grid(self):
+        """
+        Generate an RGB grid for visualization.
+
+        Returns:
+            numpy.ndarray: RGB grid of shape (height, width, 3) with values in [0, 255].
+        """
         # Extract dimensions
         height, width, _ = self.grid.shape
 
@@ -42,34 +53,48 @@ class Affiche_NCA:
         mask = self.grid[:, :, 0] > 0.1  # Mask for active cells
         number_grid = number_grid * mask - 1  # Apply mask and shift to range (-1 to 9)
 
-        # Initialize RGB_grid with ones
-        RGB_grid = torch.ones((height, width, 3), dtype=torch.int32) * 255  # Initialize to white
+        # Initialize RGB grid with white color
+        rgb_grid = torch.ones((height, width, 3), dtype=torch.int32) * 255
 
-        # Create a default RGB grid in numpy for efficient mapping
-        RGB_grid_np = RGB_grid.cpu().numpy()
-        number_grid_np = number_grid.cpu().numpy()  # Convert number grid to numpy
+        # Convert grids to NumPy for efficient mapping
+        rgb_grid_np = rgb_grid.cpu().numpy()
+        number_grid_np = number_grid.cpu().numpy()
 
         # Map colors for active cells
         for num, color in self.color_map.items():
-            # Apply the color only where number_grid == num
             mask = number_grid_np == num
-            RGB_grid_np[mask] = color  # Set RGB values for matching cells
+            rgb_grid_np[mask] = color  # Set RGB values for matching cells
 
-        return RGB_grid_np
+        return rgb_grid_np
 
     def next(self):
-        # Update grid using the model
-        self.grid = self.model.update_grid(self.grid)
-        return self.generate_RGB_grid()
+        """
+        Perform a single update on the grid and generate the next RGB grid.
 
-    def import_model(self, path):
-        # Load model and map it to the device (GPU or CPU)
-        self.model = torch.load(path, map_location=device)
-        self.model = self.model.to(device)  # Ensure the model is on the correct device
+        Returns:
+            numpy.ndarray: Updated RGB grid.
+        """
+        self.grid = self.model.update_grid(self.grid)
+        return self.generate_rgb_grid()
+
+    def import_model(self, model_path):
+        """
+        Import the NCA model from the specified path.
+
+        Args:
+            model_path (str): Path to the saved model file.
+        """
+        self.model = torch.load(model_path, map_location=DEVICE)
+        self.model = self.model.to(DEVICE)  # Ensure the model is on the correct device
         self.model.eval()
 
-    def initialise_grid(self, input):
-        # Initialize the grid on the correct device
-        width, height = input.shape
-        self.grid = torch.zeros(height, width, self.model.n_channels, device=device)
-        self.grid[:, :, 0] = input.clone().detach().to(device)
+    def initialize_grid(self, input_grid):
+        """
+        Initialize the grid with the input values.
+
+        Args:
+            input_grid (torch.Tensor): Input tensor of shape (height, width).
+        """
+        width, height = input_grid.shape
+        self.grid = torch.zeros(height, width, self.model.n_channels, device=DEVICE)
+        self.grid[:, :, 0] = input_grid.clone().detach().to(DEVICE)
