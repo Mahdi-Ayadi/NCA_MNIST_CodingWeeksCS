@@ -2,6 +2,8 @@
 
 ## Description
 
+Ce projet explore une approche originale pour résoudre le problème de classification des chiffres manuscrits du dataset MNIST en utilisant des automates cellulaires neuronaux (NCA). Contrairement à l'approche classique basée sur les réseaux de neurones convolutifs (CNN), cette méthode repose sur une grille d'automates cellulaires, où chaque cellule suit des règles locales apprises par un modèle pour générer un comportement global efficace.
+
  
 #    Sprint 0:
 
@@ -43,32 +45,65 @@ F14: Amélioration de la solution en utilisant Pygame au lieu de Tkinter
 
 F15: Ajout des courbes d'évolution de la précision (précision générale, précision sur chaque chiffre) et des courbes de loss lors du training
 
+# Modèle
+
+![Texte alternatif](src/Model.png)
 
 #  Conception
 
- Class NCA: -width  -height  -N channels -N filters [3,3,20]
+Class NCA:
 
+Cette classe implémente le cœur de l'automate cellulaire neuronal. Elle contient les paramètres et les méthodes nécessaires pour définir, initialiser et mettre à jour l'état du réseau de cellules.
+
+Attributs:
+
+width et height : Dimensions de la grille. ==>
+Définissent la largeur et la hauteur du réseau cellulaire.
+
+n_channels : Nombre de canaux internes. ==>
+Représente les états internes des cellules (par exemple, 20 canaux).
+
+n_filters : Nombre de filtres convolutifs. ==>
+Spécifie les dimensions et la profondeur des filtres (par ex. [3, 3, 20]).
+
+Tmin, Tmax : Paramètres temporels.==>
+Fixent les bornes pour les itérations d'évolution de la grille.
 Method= NCA(width, height, n_channels, n_filters, n_dense, Tmin, Tmax)
 
-Model(input)
+Méthodes :
 
-Methodes: 
+forward(grid0) :
+Effectue une étape d'évolution sur l'état initial grid0, renvoyant une nouvelle grille transformée.
 
-Affiche(n,n,1) --> n,n,3
+update(gridn) :
+Applique les règles locales d'automate pour calculer l'état suivant de la grille (gridn+1).
 
-Forward(grid0) --> gridTR
-
-Update(gridn) --> gridn+1
-
-Convertir(grid: n, n ,20 --> n,n,3)
-==> Pygame
+convertir(grid) :
+Transforme une grille interne avec n_channels=20 en une grille RGB (n_channels=3) pour l'affichage.
 
 Class Affichage _NCA :
 
-__init__(input, color_map)
+Cette classe est responsable de la gestion et de l'affichage des états de grille produits par le modèle NCA, en utilisant une carte de couleurs ou d'autres transformations visuelles.
 
-Next_img() --> n,n,3
 
+Attributs :
+
+input_grid :
+Grille d'entrée ou sortie du modèle NCA à visualiser.
+
+color_map :
+Carte de couleurs définissant comment les états des cellules sont mappés aux couleurs (par exemple, une palette RGB).
+
+Méthodes :
+
+__init__(input_grid, color_map) :
+Initialise la classe avec la grille et la carte de couleurs.
+
+next_img() :
+Génère l'image suivante basée sur l'état actuel de la grille, prête pour l'affichage en RGB.
+
+
+![Texte alternatif](src/tableau_desc.png)
 
 # Modules à avoir pour faire tourner le code 
 
@@ -90,9 +125,7 @@ Il faut :  - faire tourner le code du fichier main.py
 
            - dessiner un chiffre
 
-           - appuyer sur la lettre 'a' du clavier
-
-           - Voir si le résultat correspond à la palette suivante : 
+           - Voir si le résultat (animation) correspond à la palette suivante : 
            
                 - 0 : rouge
                 - 1 : vert
@@ -106,21 +139,12 @@ Il faut :  - faire tourner le code du fichier main.py
                 - 9 : marron
 
            - Pour refaire un nouveau test :
-
-           Apuyer sur 'a' puis 'c', et dessiner le chiffre souhaité
-
+           appuyer sur 'c' pour effacer (optionnel) et redissiner de nouveau
 # MVP
-
-            1) fichier src/animation/animation_with_model.py :
-            En input, cette fonction prend une image du database,
-            elle la colore grâce à matplotlib.animation puis elle 
-            s'affiche grâce à affichage.py
-
-
-            3) fichier src/animation/Better_animation.py :
+             fichier src/animation/animation_pygame.py :
             Grâce au module pygame, on a pu créer une 
             interface sur laquelle on dessine un chiffre qui sera 
-            reconnu selon le code couleur énoncé plutôt
+            reconnu selon le code couleur énoncé plutôt.
 
 # The models
 
