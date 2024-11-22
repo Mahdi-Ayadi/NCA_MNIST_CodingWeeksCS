@@ -2,7 +2,10 @@ import pygame
 import sys
 import math
 import random
+import sys
+sys.path.append('/src/animation/')
 from affichage import *
+
 # Initialize Pygame
 pygame.init()
 color_map = {
