@@ -45,6 +45,9 @@ F14: Amélioration de la solution en utilisant Pygame au lieu de Tkinter
 
 F15: Ajout des courbes d'évolution de la précision (précision générale, précision sur chaque chiffre) et des courbes de loss lors du training
 
+# Modèle
+
+![Texte alternatif](src/model.png)
 
 #  Conception
 
@@ -92,9 +95,7 @@ Il faut :  - faire tourner le code du fichier main.py
 
            - dessiner un chiffre
 
-           - appuyer sur la lettre 'a' du clavier
-
-           - Voir si le résultat correspond à la palette suivante : 
+           - Voir si le résultat (animation) correspond à la palette suivante : 
            
                 - 0 : rouge
                 - 1 : vert
@@ -108,21 +109,12 @@ Il faut :  - faire tourner le code du fichier main.py
                 - 9 : marron
 
            - Pour refaire un nouveau test :
-
-           Apuyer sur 'a' puis 'c', et dessiner le chiffre souhaité
-
+           appuyer sur 'c' pour effacer (optionnel) et redissiner de nouveau
 # MVP
-
-            1) fichier src/animation/animation_with_model.py :
-            En input, cette fonction prend une image du database,
-            elle la colore grâce à matplotlib.animation puis elle 
-            s'affiche grâce à affichage.py
-
-
-            3) fichier src/animation/Better_animation.py :
+             fichier src/animation/animation_pygame.py :
             Grâce au module pygame, on a pu créer une 
             interface sur laquelle on dessine un chiffre qui sera 
-            reconnu selon le code couleur énoncé plutôt
+            reconnu selon le code couleur énoncé plutôt.
 
 # The models
 
