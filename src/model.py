@@ -4,11 +4,16 @@ Implementation of a Neural Cellular Automaton (NCA) for MNIST classification.
 
 import torch
 from torch import nn  # Use explicit imports
-from torchvision import transforms, datasets
-from torch.utils.data import DataLoader
-from tqdm import tqdm
 import numpy as np
 
+import os
+import sys
+
+# Add the directory containing train.py to the Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+from .train import *
 
 # Define device (use GPU if available, otherwise CPU)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -139,45 +144,53 @@ def transform_labels_to_probagrid(inputs, labels):
         transformed_labels[i, :, :, labels[i]] = (inputs[i, :, :] > 0.1).float()
     return transformed_labels
 
-
 if __name__ == "__main__":
     # Define the model
-    model = NCA(width=28, height=28, n_channels=20, n_filters=64, n_dense=128 * 4, tmin=50, tmax=75).to(DEVICE)
+    model = NCA(width=width,
+                height=height,
+                n_channels=n_channels,
+                n_filters=n_filters,
+                n_dense=n_dense,
+                tmin=tmin,
+                tmax=tmax).to(DEVICE)
+    train(model=model)
+    # # Define the model
+    # model = NCA(width=28, height=28, n_channels=20, n_filters=64, n_dense=128 * 4, tmin=50, tmax=75).to(DEVICE)
 
-    # Define optimizer and loss
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
-    criterion = nn.CrossEntropyLoss()
+    # # Define optimizer and loss
+    # optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    # criterion = nn.CrossEntropyLoss()
 
-    # Import datasets
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Lambda(lambda x: x.squeeze(0))
-    ])
-    train_dataset = datasets.MNIST(root="./data", train=True, download=True, transform=transform)
-    test_dataset = datasets.MNIST(root="./data", train=False, download=True, transform=transform)
+    # # Import datasets
+    # transform = transforms.Compose([
+    #     transforms.ToTensor(),
+    #     transforms.Lambda(lambda x: x.squeeze(0))
+    # ])
+    # train_dataset = datasets.MNIST(root="./data", train=True, download=True, transform=transform)
+    # test_dataset = datasets.MNIST(root="./data", train=False, download=True, transform=transform)
 
-    # Create data loaders
-    BATCH_SIZE = 16
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, pin_memory=True)
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, pin_memory=True)
+    # # Create data loaders
+    # BATCH_SIZE = 16
+    # train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, pin_memory=True)
+    # test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True, pin_memory=True)
 
-    # Training Loop
-    EPOCHS = 10
-    for epoch in range(EPOCHS):
-        model.train()
-        total_loss = 0
-        for inputs, labels in tqdm(train_loader):
-            inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)
+    # # Training Loop
+    # EPOCHS = 10
+    # for epoch in range(EPOCHS):
+    #     model.train()
+    #     total_loss = 0
+    #     for inputs, labels in tqdm(train_loader):
+    #         inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)
 
-            optimizer.zero_grad()
-            logits = model(inputs)
+    #         optimizer.zero_grad()
+    #         logits = model(inputs)
 
-            labels = labels.repeat_interleave(inputs.shape[1] * inputs.shape[2])
-            loss = criterion(logits, labels)
-            loss.backward()
+    #         labels = labels.repeat_interleave(inputs.shape[1] * inputs.shape[2])
+    #         loss = criterion(logits, labels)
+    #         loss.backward()
 
-            optimizer.step()
-            total_loss += loss.item()
+    #         optimizer.step()
+    #         total_loss += loss.item()
 
-        print(f"Epoch {epoch + 1}/{EPOCHS}, Loss: {total_loss / len(train_loader):.4f}")
-        torch.save(model.state_dict(), "model_cross_entropy_sigmoid.pth")
+    #     print(f"Epoch {epoch + 1}/{EPOCHS}, Loss: {total_loss / len(train_loader):.4f}")
+    #     torch.save(model.state_dict(), "model_cross_entropy_sigmoid.pth")

@@ -15,7 +15,7 @@ class AfficheNCA:
     Class to handle visualization and grid updates for an NCA model.
     """
 
-    def __init__(self, input_grid, color_map, model_path="model_full_4.pth"):
+    def __init__(self, input_grid, color_map, model_path="model/model_full_4.pth"):
         """
         Initialize the model with the input grid, color map, and model path.
 
